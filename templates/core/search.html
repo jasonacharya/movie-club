@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Find a Title · Movie Club{% endblock %}
+{% block content %}
+<h1>Find a Title</h1>
+<form method="get" class="search panel">{{ form.q.as_field_group }}<button class="primary">Search TMDB</button></form>
+{% if error %}<p class="notice error" role="alert">{{ error }}</p>
+{% elif results %}
+<div class="poster-grid">
+  {% for title in results %}
+  <article class="card">
+    {% include "core/poster.html" %}
+    <div class="card-copy">
+      <h2>{{ title.name }}</h2>
+      <p class="muted">{{ title.get_media_type_display }}{% if title.release_date %} · {{ title.release_date|date:"Y" }}{% endif %}</p>
+      <form method="post" action="{% url 'import_title' %}">{% csrf_token %}
+        <input type="hidden" name="tmdb_id" value="{{ title.tmdb_id }}">
+        <input type="hidden" name="media_type" value="{{ title.media_type }}">
+        <button aria-label="Select {{ title.name }}">Select Title</button>
+      </form>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% elif form.is_bound and not form.errors %}<p class="empty">No movies or TV series found.</p>{% endif %}
+{% endblock %}

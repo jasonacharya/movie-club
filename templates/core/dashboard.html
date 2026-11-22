@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}{{ owner.username }} · Movie Club{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <h1>{{ owner.username }}</h1>
+    <div class="actions">
+      <a class="button primary" href="{% url 'collection' owner.pk %}">Browse Collection</a>
+      <a class="button" href="{% url 'personal_list' owner.pk %}">Personal Watchlist</a>
+      {% if owner == user %}<a class="button" href="{% url 'search' %}">Add Watched Title</a>{% endif %}
+    </div>
+  </div>
+  <dl class="metrics">
+    <div><dt>Movies watched</dt><dd>{{ movies }}</dd></div>
+    <div><dt>TV series watched</dt><dd>{{ series }}</dd></div>
+  </dl>
+</section>
+<section>
+  <div class="section-head"><h2>Top 5</h2>
+    {% if owner == user %}<a class="button" href="{% url 'picks_edit' %}">Edit Top 5</a>{% endif %}
+  </div>
+  {% if picks %}
+  <ol class="poster-grid ranked">
+    {% for pick in picks %}
+    <li class="ranked-item">
+      <span class="rank">{{ pick.rank }}</span>
+      {% include "core/title_card.html" with title=pick.title %}
+      {% if owner != user and pick.title_id in viewer_watched %}<p class="state">Already Watched</p>{% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+  {% else %}<p class="empty">No Top 5 picks yet.</p>{% endif %}
+</section>
+{% endblock %}

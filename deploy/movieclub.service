@@ -1,0 +1,18 @@
+[Unit]
+Description=Private Movie Club
+After=network.target
+
+[Service]
+Type=simple
+User=movieclub
+Group=movieclub
+WorkingDirectory=/srv/movieclub
+EnvironmentFile=/etc/movieclub.env
+ExecStart=/srv/movieclub/.venv/bin/gunicorn --workers 2 --threads 2 --bind 127.0.0.1:8000 --forwarded-allow-ips 127.0.0.1 --error-logfile - config.wsgi:application
+Restart=on-failure
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

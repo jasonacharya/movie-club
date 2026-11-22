@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Sign In · Movie Club{% endblock %}
+{% block content %}
+<section class="signin panel">
+  <h1>Sign in</h1>
+  <p class="muted">Your private movie and TV club.</p>
+  <form method="post" class="stack">{% csrf_token %}{{ form.as_p }}
+    <input type="hidden" name="next" value="{{ next }}">
+    <button class="primary">Sign In</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Edit Top 5 · Movie Club{% endblock %}
+{% block content %}
+<p><a class="back" href="{% url 'dashboard' user.pk %}">← Your Dashboard</a></p>
+<h1>Edit Top 5</h1>
+{% if picks %}
+<ol class="rows">
+{% for pick in picks %}
+  <li class="panel">
+    <h2>{{ pick.rank }}. {{ pick.title.name }}</h2>
+    <form class="actions" method="post">{% csrf_token %}<input type="hidden" name="pick" value="{{ pick.pk }}">
+      {% if not forloop.first %}<button name="action" value="up">Move Up</button>{% endif %}
+      {% if not forloop.last %}<button name="action" value="down">Move Down</button>{% endif %}
+      <button class="danger" name="action" value="remove">Remove</button>
+    </form>
+    {% if form.fields.title.queryset %}
+    <form class="actions replacement" method="post">{% csrf_token %}<input type="hidden" name="pick" value="{{ pick.pk }}">
+      <label>Replacement
+      <select name="title" required><option value="">Choose a title</option>
+        {% for title in form.fields.title.queryset %}<option value="{{ title.pk }}">{{ title }}</option>{% endfor %}
+      </select></label>
+      <button name="action" value="replace">Replace</button>
+    </form>
+    {% endif %}
+  </li>
+{% endfor %}
+</ol>
+{% endif %}
+{% if picks|length < 5 %}
+  {% if form.fields.title.queryset %}
+  <form method="post" class="panel stack">{% csrf_token %}{{ form.as_p }}<button class="primary" name="action" value="add">Add Pick</button></form>
+  {% else %}<p class="empty">Log a title in your watched collection to add another pick.</p>{% endif %}
+{% endif %}
+{% endblock %}

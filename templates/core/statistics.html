@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Statistics · Movie Club{% endblock %}
+{% block content %}
+<h1>Watch Statistics</h1>
+<div class="split">
+{% for member, movies, series in totals %}
+<section class="panel">
+  <h2><a href="{% url 'dashboard' member.pk %}">{{ member.username }}</a></h2>
+  <dl class="metrics">
+    <div><dt>Movies watched</dt><dd>{{ movies }}</dd></div>
+    <div><dt>TV series watched</dt><dd>{{ series }}</dd></div>
+  </dl>
+</section>
+{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+<article class="panel list-entry">
+  <h3><a href="{% url 'detail' entry.title_id %}">{{ entry.title.name }}</a></h3>
+  <p class="muted">{% if incoming %}From {{ entry.sender.username }}{% else %}To {{ entry.recipient.username }}{% endif %} · {% if incoming and entry.title_id in logged %}Watched{% else %}{{ entry.get_status_display }}{% endif %}</p>
+  {% if entry.message %}<p class="prose">{{ entry.message }}</p>{% endif %}
+  {% if entry.feedback %}<p class="prose"><strong>Feedback</strong> · {{ entry.feedback }}</p>{% endif %}
+  <div class="actions">
+  {% if incoming %}
+    <a class="button" href="{% url 'recommendation_update' entry.pk %}">Update Status</a>
+    {% if entry.status == 'watched' %}
+      {% if entry.title_id not in logged %}<a class="button primary" href="{% url 'watched_add' entry.title_id %}">Add to Watched Collection</a>{% endif %}
+      <a class="button" href="{% url 'recommendation_feedback' entry.pk %}">{% if entry.feedback %}Edit{% else %}Leave{% endif %} Feedback</a>
+    {% endif %}
+  {% else %}
+    <a class="button" href="{% url 'recommendation_message' entry.pk %}">Edit Message</a>
+  {% endif %}
+  </div>
+</article>

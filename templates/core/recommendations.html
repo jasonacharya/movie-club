@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Recommendations · Movie Club{% endblock %}
+{% block content %}
+<h1>Recommendations</h1>
+<section>
+  <h2>Incoming · Pending</h2>
+  {% for entry in pending %}{% include "core/recommendation.html" with incoming=True %}
+  {% empty %}<p class="empty">No pending recommendations.</p>{% endfor %}
+</section>
+<section>
+  <h2>Incoming · History</h2>
+  {% for entry in history %}{% include "core/recommendation.html" with incoming=True %}
+  {% empty %}<p class="empty">No resolved recommendations yet.</p>{% endfor %}
+</section>
+<section>
+  <h2>Sent</h2>
+  {% for entry in outgoing %}{% include "core/recommendation.html" with incoming=False %}
+  {% empty %}<p class="empty">No recommendations sent yet.</p>{% endfor %}
+</section>
+{% endblock %}

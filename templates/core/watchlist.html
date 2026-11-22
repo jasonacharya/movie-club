@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Watchlist · Movie Club{% endblock %}
+{% block content %}
+{% if owner %}<p><a class="back" href="{% url 'dashboard' owner.pk %}">← {{ owner.username }}</a></p>{% endif %}
+<div class="section-head">
+  <h1>{% if shared %}Shared Watchlist{% else %}{{ owner.username }}’s Watchlist{% endif %}</h1>
+  {% if shared or owner == user %}<a class="button primary" href="{% url 'search' %}">Find a Title</a>{% endif %}
+</div>
+{% if entries %}
+<div class="poster-grid">
+  {% for entry in entries %}
+  <div>
+    {% include "core/title_card.html" with title=entry.title %}
+    {% if shared %}
+    <p class="state">Added by {{ entry.added_by.username }} · {% if entry.watched %}Watched{% else %}Want to Watch{% endif %}</p>
+    {% if not entry.watched %}<form method="post" action="{% url 'shared_watched' entry.pk %}">{% csrf_token %}<button>Mark Watched</button></form>{% endif %}
+    {% elif owner == user %}
+    <div class="actions state">
+      <form method="post" action="{% url 'personal_change' entry.pk 'watched' %}">{% csrf_token %}<button>Mark Watched</button></form>
+      <form method="post" action="{% url 'personal_change' entry.pk 'remove' %}">{% csrf_token %}<button class="quiet danger">Remove</button></form>
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% else %}<p class="empty">No titles on this watchlist yet.</p>{% endif %}
+{% endblock %}

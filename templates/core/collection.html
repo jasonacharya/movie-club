@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ owner.username }}’s Collection · Movie Club{% endblock %}
+{% block content %}
+<p><a class="back" href="{% url 'dashboard' owner.pk %}">← {{ owner.username }}</a></p>
+<div class="section-head"><h1>Watched Collection</h1>{% if owner == user %}<a class="button primary" href="{% url 'search' %}">Add Title</a>{% endif %}</div>
+<form method="get" class="filters panel">
+  <label>Title <input type="search" name="q" value="{{ q }}" maxlength="150" placeholder="Search collection"></label>
+  <label>Media type <select name="media"><option value="">All</option><option value="movie"{% if media == 'movie' %} selected{% endif %}>Movies</option><option value="tv"{% if media == 'tv' %} selected{% endif %}>TV Series</option></select></label>
+  <label>Genre <select name="genre"><option value="">All</option>{% for option in genres %}<option value="{{ option.pk }}"{% if genre == option.pk|stringformat:"s" %} selected{% endif %}>{{ option.name }}</option>{% endfor %}</select></label>
+  <label>Sort <select name="sort"><option value="recent"{% if sort == 'recent' %} selected{% endif %}>Recently Added</option><option value="highest"{% if sort == 'highest' %} selected{% endif %}>Highest Rating</option><option value="lowest"{% if sort == 'lowest' %} selected{% endif %}>Lowest Rating</option><option value="title"{% if sort == 'title' %} selected{% endif %}>Title A–Z</option></select></label>
+  <button>Apply</button>
+</form>
+{% if page.object_list %}
+<div class="poster-grid">
+  {% for entry in page %}
+    <div>{% include "core/title_card.html" with title=entry.title %}
+    <p class="state">{% if entry.rating == None %}Unrated{% else %}{{ entry.rating }}/10{% endif %}</p></div>
+  {% endfor %}
+</div>
+{% if page.has_other_pages %}
+<nav class="actions pagination" aria-label="Collection pages">
+  {% if page.has_previous %}<a class="button" href="{% querystring page=page.previous_page_number %}">Previous</a>{% endif %}
+  <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+  {% if page.has_next %}<a class="button" href="{% querystring page=page.next_page_number %}">Next</a>{% endif %}
+</nav>
+{% endif %}
+{% else %}<p class="empty">No watched titles match these filters.</p>{% endif %}
+{% endblock %}

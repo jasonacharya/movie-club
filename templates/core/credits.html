@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Credits · Movie Club{% endblock %}
+{% block content %}
+<h1>Credits</h1>
+<section class="panel">
+  <h2>The Movie Database</h2>
+  <p>Title metadata and posters are provided by TMDB.</p>
+  <p>This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+  <a href="https://www.themoviedb.org"><img width="126" src="{% static 'tmdb-logo.svg' %}" alt="TMDB"></a>
+</section>
+{% endblock %}

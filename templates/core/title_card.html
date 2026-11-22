@@ -1,0 +1,10 @@
+<article class="card">
+  <a href="{% url 'detail' title.pk %}" class="card-link">
+    {% include "core/poster.html" %}
+    <div class="card-copy">
+      <h3>{{ title.name }}</h3>
+      <p class="muted">{{ title.get_media_type_display }}{% if title.release_date %} · {{ title.release_date|date:"Y" }}{% endif %}</p>
+    </div>
+  </a>
+  {% block extra %}{% endblock %}
+</article>

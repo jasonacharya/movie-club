@@ -1,0 +1,12 @@
+{% if comment.deleted %}
+<p class="muted">Comment deleted</p>
+{% else %}
+<p><strong>{{ comment.author.username }}</strong> <time class="muted" datetime="{{ comment.created_at|date:'c' }}">{{ comment.created_at|date:"M j, Y · H:i" }}</time></p>
+<p class="prose">{{ comment.body }}</p>
+{% if comment.author == user %}
+<div class="actions">
+  <a href="{% url 'comment_edit' comment.pk %}">Edit</a>
+  <form method="post" action="{% url 'comment_delete' comment.pk %}">{% csrf_token %}<button class="quiet danger">Delete</button></form>
+</div>
+{% endif %}
+{% endif %}

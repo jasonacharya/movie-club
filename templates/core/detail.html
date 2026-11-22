@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ title.name }} · Movie Club{% endblock %}
+{% block content %}
+<section class="title-hero hero">
+  {% include "core/poster.html" %}
+  <div>
+    <p class="muted">{{ title.get_media_type_display }}{% if title.release_date %} · {{ title.release_date|date:"Y" }}{% endif %}</p>
+    <h1>{{ title.name }}</h1>
+    {% if title.genres.all %}<p class="muted">{% for genre in title.genres.all %}{{ genre }}{% if not forloop.last %} · {% endif %}{% endfor %}</p>{% endif %}
+    {% if title.overview %}<p class="prose">{{ title.overview }}</p>{% endif %}
+    <div class="actions">
+    {% if watched %}
+      <a class="button primary" href="{% url 'watched_edit' watched.pk %}">Edit Rating or Review</a>
+    {% else %}
+      <a class="button primary" href="{% url 'watched_add' title.pk %}">Log as Watched</a>
+      <form action="{% url 'watchlist_add' title.pk 'personal' %}" method="post">{% csrf_token %}<button>Add to My Watchlist</button></form>
+    {% endif %}
+    <form action="{% url 'watchlist_add' title.pk 'shared' %}" method="post">{% csrf_token %}<button>Add to Shared Watchlist</button></form>
+    {% if already_watched %}<span class="muted">{{ other.username }} · Already Watched</span>
+    {% elif other %}<a class="button" href="{% url 'recommend' title.pk %}">Recommend to Friend</a>{% endif %}
+    </div>
+  </div>
+</section>
+<section>
+  <h2>Ratings &amp; Reviews</h2>
+  <div class="split">
+  {% for member, entry in ratings %}
+    <article class="panel">
+      <h3>{{ member.username }}</h3>
+      {% if not entry %}<p class="muted">Not Watched</p>
+      {% elif entry.rating == None %}<p class="muted">Watched · Unrated</p>
+      {% else %}<p class="score">{{ entry.rating }}<small>/10</small></p>{% endif %}
+      {% if entry.review %}<p class="prose">{{ entry.review }}</p>{% endif %}
+      {% if entry and member == user %}
+        <form action="{% url 'watched_delete' entry.pk %}" method="post">{% csrf_token %}<button class="quiet danger">Remove from Collection</button></form>
+      {% endif %}
+    </article>
+  {% endfor %}
+  </div>
+</section>
+<section>
+  <div class="section-head"><h2>Discussion</h2><a class="button" href="{% url 'comment_add' title.pk %}">Add Comment</a></div>
+  {% for comment in comments %}
+  <article class="panel thread">
+    {% include "core/comment.html" %}
+    {% if not comment.deleted %}<a class="button" href="{% url 'comment_reply' title.pk comment.pk %}">Reply</a>{% endif %}
+    {% for reply in comment.replies.all %}
+    <div class="reply">{% include "core/comment.html" with comment=reply %}</div>
+    {% endfor %}
+  </article>
+  {% empty %}<p class="empty">No comments yet.</p>{% endfor %}
+</section>
+{% endblock %}

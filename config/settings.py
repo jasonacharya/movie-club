@@ -4,12 +4,38 @@ from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def load_env(path):
+    try:
+        contents = path.read_text(encoding="utf-8-sig")
+    except FileNotFoundError:
+        return
+    except (OSError, UnicodeError):
+        raise ImproperlyConfigured("Could not read the project .env as UTF-8.") from None
+
+    for number, line in enumerate(contents.splitlines(), start=1):
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        key, separator, value = line.partition("=")
+        key = key.strip()
+        if not separator or not key.isascii() or not key.isidentifier() or "\0" in value:
+            raise ImproperlyConfigured(f"Invalid .env entry on line {number}. Use KEY=value.")
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+            value = value[1:-1]
+        os.environ.setdefault(key, value)
+
+
+load_env(BASE_DIR / ".env")
+
 DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() in {"true", "1"}
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY") or (
     "django-insecure-local-development-only" if DEBUG else ""
 )
 if not SECRET_KEY:
-    raise ImproperlyConfigured("Set DJANGO_SECRET_KEY in the environment.")
+    raise ImproperlyConfigured("Set DJANGO_SECRET_KEY in the environment or project .env.")
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,[::1]" if DEBUG else "").split(",")
 CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS") else []

@@ -31,6 +31,11 @@ section + section { margin-top: 2rem; }
 .brand span { color: var(--accent); margin-right: .3rem; }
 nav a, .back { color: var(--muted); }
 nav a { padding: .35rem; }
+.club-nav { gap: .25rem; }
+.club-nav a { padding: .48rem .65rem; border: 1px solid transparent; border-radius: .42rem; text-decoration: none; overflow-wrap: anywhere; }
+.club-nav a:hover { border-color: #61574a; }
+.signed-in { padding: .38rem .65rem; border: 1px solid var(--line); border-radius: .42rem; color: var(--muted); font-size: .875rem; overflow-wrap: anywhere; }
+.signed-in strong { color: var(--text); }
 main { min-height: 70vh; padding-block: clamp(1.5rem, 5vw, 3.5rem); }
 .footer { justify-content: space-between; border-top: 1px solid var(--line); padding-block: 1.25rem; }
 .section-head { justify-content: space-between; margin-bottom: 1rem; }
@@ -56,7 +61,7 @@ button, .button {
 }
 button:hover, .button:hover { border-color: var(--accent); }
 button.danger { color: var(--danger); }
-.primary { color: #20160a; background: var(--accent); border-color: var(--accent); font-weight: 650; }
+.primary, .club-nav a[aria-current] { color: #20160a; background: var(--accent); border-color: var(--accent); font-weight: 650; }
 .quiet { border-color: transparent; background: transparent; text-decoration: underline; }
 .poster-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr)); gap: 1rem; }
 .ranked, .rows { list-style: none; padding: 0; }

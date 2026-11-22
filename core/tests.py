@@ -65,6 +65,22 @@ class ClubTests(TestCase):
         self.assertEqual(client.post(url).status_code, 403)
         self.assertFalse(PersonalWatch.objects.exists())
 
+    def test_navigation_highlights_viewed_section_and_names_signed_in_user(self):
+        for route, args, active_route, active_args, state in [
+            ("dashboard", (self.blair.pk,), "dashboard", (self.blair.pk,), "page"),
+            ("collection", (self.blair.pk,), "dashboard", (self.blair.pk,), "location"),
+            ("picks_edit", (), "dashboard", (self.alex.pk,), "location"),
+            ("recommendations", (), "recommendations", (), "page"),
+            ("shared_list", (), "shared_list", (), "page"),
+            ("statistics", (), "statistics", (), "page"),
+            ("search", (), "search", (), "page"),
+        ]:
+            with self.subTest(route=route):
+                page = self.get(route, *args)
+                self.assertContains(page, 'Signed in as</span> <strong>alex</strong>')
+                self.assertContains(page, f'href="{reverse(active_route, args=active_args)}" aria-current="{state}"')
+                self.assertContains(page, "aria-current=", count=1)
+
     def test_watched_validates_rating_and_escapes_review(self):
         for invalid in ("8.2", "10.5", "-0.5"):
             self.assertEqual(self.post("watched_add", [self.movie.pk], rating=invalid).status_code, 200)

@@ -13,13 +13,18 @@
   <div class="shell bar">
     <a class="brand" href="{% url 'home' %}"><span aria-hidden="true">◉</span> Movie Club</a>
     {% if request.members and request.user in request.members %}
-    <nav aria-label="Club">
-      {% for member in request.members %}<a href="{% url 'dashboard' member.pk %}">{{ member.username }}</a>{% endfor %}
-      <a href="{% url 'recommendations' %}">Recommendations</a>
-      <a href="{% url 'shared_list' %}">Shared Watchlist</a>
-      <a href="{% url 'statistics' %}">Statistics</a>
+    {% with route=request.resolver_match.url_name profile_id=request.resolver_match.kwargs.user_id %}
+    <nav class="club-nav" aria-label="Club">
+      {% for member in request.members %}
+      <a href="{% url 'dashboard' member.pk %}"{% if route == 'dashboard' and profile_id == member.pk %} aria-current="page"{% elif profile_id == member.pk or route == 'picks_edit' and member == user %} aria-current="location"{% endif %}>{{ member.username }}</a>
+      {% endfor %}
+      <a href="{% url 'recommendations' %}"{% if route == 'recommendations' %} aria-current="page"{% elif route == 'recommendation_message' or route == 'recommendation_update' or route == 'recommendation_feedback' or route == 'recommend' %} aria-current="location"{% endif %}>Recommendations</a>
+      <a href="{% url 'shared_list' %}"{% if route == 'shared_list' %} aria-current="page"{% endif %}>Shared Watchlist</a>
+      <a href="{% url 'statistics' %}"{% if route == 'statistics' %} aria-current="page"{% endif %}>Statistics</a>
+      <a href="{% url 'search' %}"{% if route == 'search' %} aria-current="page"{% endif %}>Find a Title</a>
     </nav>
-    <a class="button primary" href="{% url 'search' %}">Find a Title</a>
+    {% endwith %}
+    <div class="signed-in"><span>Signed in as</span> <strong>{{ user.username }}</strong></div>
     {% endif %}
   </div>
 </header>

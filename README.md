@@ -19,7 +19,9 @@ python manage.py runserver
 
 Open http://127.0.0.1:8000 and sign in. The Django management command prompts for passwords. A user can change a password through `python manage.py changepassword USERNAME` on the server. The first two active accounts by creation order are the club members. Create only the two intended club accounts. Membership and the friend recipient are derived from the database.
 
-Set `TMDB_READ_TOKEN` to your TMDB API Read Access Token or `TMDB_API_KEY` to your v3 key before starting Django. An existing local collection works without credentials. Search and first-time imports require access to TMDB. Use a private environment file or enter credentials through your shell's secret input mechanism. [.env.example](.env.example) lists the supported production settings.
+Django automatically loads `.env` from the project root. Use [.env.example](.env.example) as a starting point for a new file. For local development, set `DJANGO_DEBUG=True` and use `localhost,127.0.0.1,[::1]` for `DJANGO_ALLOWED_HOSTS`. The file uses one `KEY=value` entry per line and supports blank lines and full-line comments. Already-defined environment variables take precedence.
+
+Set `TMDB_READ_TOKEN` to your TMDB API Read Access Token or `TMDB_API_KEY` to your v3 key. An existing local collection works without credentials. Search and first-time imports require access to TMDB.
 
 ## Use the club
 
